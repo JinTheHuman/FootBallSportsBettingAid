@@ -5,6 +5,29 @@ import numpy as np
 from data_model import make_away_predictions
 from data_model import make_home_predictions
 
+teamNames = [
+    "newcastle united",
+    "manchester united",
+    "manchester city",
+    "tottenham hotspur",
+    "liverpool",
+    "arsenal",
+    "brighton and hove albion",
+    "crystal palace",
+    "brentford",
+    "nottingham forest",
+    "burnley",
+    "luton town",
+    "everton",
+    "wolverhampton wanderers",
+    "sheffield-united",
+    "bournemouth",
+    "fulham",
+    "aston villa",
+    "chelsea",
+    "west ham united",
+]
+
 
 def getStatsLink(link):
     splitLinks = link.split("/")
@@ -41,7 +64,7 @@ def getStats(teamName):
             "span", class_="sdc-site-match-header__team-name-block-target"
         )
 
-        home = names[0] == teamName
+        home = names[0].text.lower() == teamName.lower().replace("-", " ")
 
         print(names[0].text, "vs", names[1].text)
         stats = stats_soup.find_all("div", class_="sdc-site-match-stats__stats")
@@ -61,16 +84,17 @@ def getStats(teamName):
                     "div", class_="sdc-site-match-stats__stats-away"
                 ).span.text
 
+                stat_txt += comma + home_stat
+                stat_txt += "," + away_stat
                 if home:
                     num_stats.append(float(home_stat))
-                    stat_txt += comma + home_stat
                 else:
-                    stat_txt += comma + away_stat
                     num_stats.append(float(away_stat))
         except:
             print("error encountered")
 
         fixture_stats.append(num_stats)
+        print(num_stats)
         print(stat_txt)
     return fixture_stats
 
@@ -83,19 +107,38 @@ def getaverage(statsList):
 
     length = len(statsList)
 
-    averageStats = [round(x / length, 2) for x in totalStats]
+    averageStats = [round(x / length, 1) for x in totalStats]
     return averageStats
+
+
+def clean_stats(stats):
+    cleanStats = []
+    for idx, stat in enumerate(stats):
+        if idx not in [0, 1, 10, 11, 18, 19, 20, 21]:
+            cleanStats.append(round(stat))
+        else:
+            cleanStats.append(stat)
+
+    cleanStats[2] = cleanStats[4] + cleanStats[6] + cleanStats[8]
+    cleanStats[3] = cleanStats[5] + cleanStats[7] + cleanStats[9]
+    return cleanStats
 
 
 if __name__ == "__main__":
     homeTeam = input("Give me home team: ")
     awayTeam = input("Give me away team: ")
 
+    # assert homeTeam in teamNames and awayTeam in teamNames
+
+    print("GETTING HOME STATS")
     homeStats = getaverage(getStats(homeTeam))
+    print("GETTING AWAY STATS")
     awayStats = getaverage(getStats(awayTeam))
 
     lists = [homeStats, awayStats]
     gameStats = [val for tup in zip(*lists) for val in tup]
+
+    gameStats = clean_stats(gameStats)
 
     statNames = [
         "HomePos",
@@ -132,10 +175,31 @@ if __name__ == "__main__":
         "aRed",
     ]
 
-    for idx, statName in enumerate(statNames):
-        print(str(statName) + ": " + str(gameStats[idx]))
+    if (gameStats[0] + gameStats[1]) != 100:
+        difference = 100 - (gameStats[0] + gameStats[1])
+        print(difference)
+        gameStats[0] += difference / 2
+        gameStats[1] += difference / 2
+        gameStats[0] = round(gameStats[0], 1)
+        gameStats[1] = round(gameStats[1], 1)
 
-    print(gameStats)
+    if (gameStats[20] + gameStats[21]) != 100:
+        difference = 100 - (gameStats[20] + gameStats[21])
+
+        gameStats[20] += difference / 2
+        gameStats[21] += difference / 2
+        gameStats[20] = round(gameStats[20], 1)
+        gameStats[21] = round(gameStats[21], 1)
+
+    gameStats[22] = 0
+
+    for idx in range(0, len(statNames), 2):
+        h = str(gameStats[idx])
+        a = str(gameStats[idx + 1])
+
+        print(
+            f"{idx:{2}} {statNames[idx]:{10}}{h:{30}} {idx + 1:{2}} {statNames[idx+1]:{10}}{a}"
+        )
 
     homeGoals = make_home_predictions([np.array(gameStats).reshape(1, -1)])
     awayGoals = make_away_predictions([np.array(gameStats).reshape(1, -1)])
