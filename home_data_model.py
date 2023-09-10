@@ -11,8 +11,7 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 
 def make_home_predictions(inputs):
     predictions = []
-    dataset = pd.read_csv("Datasets/PL_DATA.csv")
-    dataset = dataset.drop(["awayGoals"], axis=1)
+    dataset = pd.read_csv("Datasets/HOME_DATA.csv")
     X = dataset.iloc[:, 1:].to_numpy()
     y = dataset["HomeGoals"]
     scaler = StandardScaler()
@@ -45,7 +44,7 @@ def probability_analysis(predictions, results):
     total = 0
     correct = 0
 
-    incorrect_by = [0, 0, 0, 0, 0, 0]
+    incorrect_by = [0, 0, 0, 0, 0, 0, 0, 0]
 
     for idx, prediction in enumerate(predictions):
         rounded_prediction = round(prediction)
@@ -57,7 +56,7 @@ def probability_analysis(predictions, results):
             incorrect_by[abs(rounded_prediction - results[idx])] += 1
         total += 1
 
-    print("Away Goal Predictions")
+    print("Goal Predictions")
     print(correct, "out of", total)
     print("Success Rate: ", correct / total * 100, "%")
     for i in range(1, len(incorrect_by)):
@@ -79,24 +78,24 @@ def plot_data(x, y, title="Goals Scored failed predictions"):
 def generate_input(dataset):
     inputs = []
     for index, row in dataset.iterrows():
-        row_values = row.values[2:]
+        row_values = row.values[1:]
         inputs.append(np.array(row_values).reshape(1, -1))
 
     return inputs
 
 
 if __name__ == "__main__":
-    # # HOME GOALS PREDICTION
-    # home_dataset = pd.read_csv("Datasets/PL_DATA.csv")
+    # HOME GOALS PREDICTION
+    home_dataset = pd.read_csv("Datasets/HOME_DATA.csv")
 
-    # inputs = generate_input(home_dataset)
+    inputs = generate_input(home_dataset)
 
-    # h_predictions = make_home_predictions(inputs)
-    # results = home_dataset["HomeGoals"]
+    h_predictions = make_home_predictions(inputs)
+    results = home_dataset["HomeGoals"]
 
-    # probability_analysis(h_predictions, results)
+    probability_analysis(h_predictions, results)
 
-    # plot_data(home_dataset["HomeGoals"], h_predictions, "Home Predictions")
+    plot_data(home_dataset["HomeGoals"], h_predictions, "Home Predictions")
 
     # # AWAY GOALS PREDICTION
     # away_dataset = pd.read_csv("Datasets/PL_DATA.csv")
@@ -109,41 +108,3 @@ if __name__ == "__main__":
     # probability_analysis(a_predictions, results)
 
     # plot_data(away_dataset["awayGoals"], a_predictions, "Away Predictions")
-
-    input = [
-        0,
-        100,
-        16,
-        21,
-        4,
-        11,
-        6,
-        3,
-        6,
-        7,
-        80.5,
-        86.7,
-        2,
-        3,
-        7,
-        4,
-        2,
-        1,
-        59.3,
-        68.4,
-        47.1,
-        52.9,
-        6,
-        3,
-        15,
-        9,
-        9,
-        15,
-        4,
-        3,
-        0,
-        0,
-    ]
-    hgs = make_home_predictions([np.array(input).reshape(1, -1)])
-    ags = make_away_predictions([np.array(input).reshape(1, -1)])
-    print(hgs, ags)
