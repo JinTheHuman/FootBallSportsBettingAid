@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import copy
 import numpy as np
-from data_model import make_away_predictions
-from data_model import make_home_predictions
+from DataModels.seagull_data_model import make_away_predictions
+from DataModels.seagull_data_model import make_home_predictions
 
 teamNames = [
     "newcastle united",
@@ -135,73 +135,73 @@ if __name__ == "__main__":
     print("GETTING AWAY STATS")
     awayStats = getaverage(getStats(awayTeam))
 
-    lists = [homeStats, awayStats]
-    gameStats = [val for tup in zip(*lists) for val in tup]
+    # lists = [homeStats, awayStats]
+    # gameStats = [val for tup in zip(*lists) for val in tup]
 
-    gameStats = clean_stats(gameStats)
+    # gameStats = clean_stats(gameStats)
 
-    statNames = [
-        "HomePos",
-        "AwayPos",
-        "hShots",
-        "aShots",
-        "hOnt",
-        "aOnt",
-        "hOft",
-        "aOft",
-        "hBlock",
-        "aBlcok",
-        "hPass",
-        "aPass",
-        "hClear",
-        "aClear",
-        "hCorners",
-        "aCorners",
-        "hOff",
-        "aOff",
-        "hTackles",
-        "aTackles",
-        "hAerial",
-        "aAerial",
-        "hSaves",
-        "aSaves",
-        "hFouls",
-        "aFouls",
-        "hFoulsW",
-        "aFoulsW",
-        "hYellow",
-        "aYellow",
-        "hRed",
-        "aRed",
-    ]
+    # statNames = [
+    #     "HomePos",
+    #     "AwayPos",
+    #     "hShots",
+    #     "aShots",
+    #     "hOnt",
+    #     "aOnt",
+    #     "hOft",
+    #     "aOft",
+    #     "hBlock",
+    #     "aBlcok",
+    #     "hPass",
+    #     "aPass",
+    #     "hClear",
+    #     "aClear",
+    #     "hCorners",
+    #     "aCorners",
+    #     "hOff",
+    #     "aOff",
+    #     "hTackles",
+    #     "aTackles",
+    #     "hAerial",
+    #     "aAerial",
+    #     "hSaves",
+    #     "aSaves",
+    #     "hFouls",
+    #     "aFouls",
+    #     "hFoulsW",
+    #     "aFoulsW",
+    #     "hYellow",
+    #     "aYellow",
+    #     "hRed",
+    #     "aRed",
+    # ]
 
-    if (gameStats[0] + gameStats[1]) != 100:
-        difference = 100 - (gameStats[0] + gameStats[1])
-        print(difference)
-        gameStats[0] += difference / 2
-        gameStats[1] += difference / 2
-        gameStats[0] = round(gameStats[0], 1)
-        gameStats[1] = round(gameStats[1], 1)
+    # if (gameStats[0] + gameStats[1]) != 100:
+    #     difference = 100 - (gameStats[0] + gameStats[1])
+    #     print(difference)
+    #     gameStats[0] += difference / 2
+    #     gameStats[1] += difference / 2
+    #     gameStats[0] = round(gameStats[0], 1)
+    #     gameStats[1] = round(gameStats[1], 1)
 
-    if (gameStats[20] + gameStats[21]) != 100:
-        difference = 100 - (gameStats[20] + gameStats[21])
+    # if (gameStats[20] + gameStats[21]) != 100:
+    #     difference = 100 - (gameStats[20] + gameStats[21])
 
-        gameStats[20] += difference / 2
-        gameStats[21] += difference / 2
-        gameStats[20] = round(gameStats[20], 1)
-        gameStats[21] = round(gameStats[21], 1)
+    #     gameStats[20] += difference / 2
+    #     gameStats[21] += difference / 2
+    #     gameStats[20] = round(gameStats[20], 1)
+    #     gameStats[21] = round(gameStats[21], 1)
 
-    gameStats[22] = 0
+    # gameStats[22] = 0
 
-    for idx in range(0, len(statNames), 2):
-        h = str(gameStats[idx])
-        a = str(gameStats[idx + 1])
+    # for idx in range(0, len(statNames), 2):
+    #     h = str(gameStats[idx])
+    #     a = str(gameStats[idx + 1])
 
-        print(
-            f"{idx:{2}} {statNames[idx]:{10}}{h:{30}} {idx + 1:{2}} {statNames[idx+1]:{10}}{a}"
-        )
+    #     print(
+    #         f"{idx:{2}} {statNames[idx]:{10}}{h:{30}} {idx + 1:{2}} {statNames[idx+1]:{10}}{a}"
+    #     )
 
-    homeGoals = make_home_predictions([np.array(gameStats).reshape(1, -1)])
-    awayGoals = make_away_predictions([np.array(gameStats).reshape(1, -1)])
+    homeGoals = make_home_predictions([np.array(homeStats).reshape(1, -1)])
+    awayGoals = make_away_predictions([np.array(awayStats).reshape(1, -1)])
 
     print(homeTeam, homeGoals[0], awayGoals[0], awayTeam)

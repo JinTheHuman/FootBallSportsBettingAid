@@ -11,7 +11,9 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 
 def make_home_predictions(inputs):
     predictions = []
-    dataset = pd.read_csv("Datasets/HOME_DATA.csv")
+    dataset = pd.read_csv("Datasets/PL_DATA.csv")
+    dataset = dataset.drop(["awayGoals"], axis=1)
+    dataset = dataset.drop(["aSaves"], axis=1)
     X = dataset.iloc[:, 1:].to_numpy()
     y = dataset["HomeGoals"]
     scaler = StandardScaler()
@@ -28,6 +30,7 @@ def make_away_predictions(inputs):
     predictions = []
     dataset = pd.read_csv("Datasets/PL_DATA.csv")
     dataset = dataset.drop(["HomeGoals"], axis=1)
+    dataset = dataset.drop(["hSaves"], axis=1)
     X = dataset.iloc[:, 1:].to_numpy()
     y = dataset["awayGoals"]
     scaler = StandardScaler()
@@ -78,33 +81,74 @@ def plot_data(x, y, title="Goals Scored failed predictions"):
 def generate_input(dataset):
     inputs = []
     for index, row in dataset.iterrows():
-        row_values = row.values[1:]
+        row_values = row.values[2:]
         inputs.append(np.array(row_values).reshape(1, -1))
 
     return inputs
 
 
 if __name__ == "__main__":
-    # HOME GOALS PREDICTION
-    home_dataset = pd.read_csv("Datasets/HOME_DATA.csv")
+    # # HOME GOALS PREDICTION
+    # home_dataset = pd.read_csv("Datasets/PL_DATA.csv")
+    # home_dataset = home_dataset.drop(["aSaves"], axis=1)
+    # inputs = generate_input(home_dataset)
 
-    inputs = generate_input(home_dataset)
+    # h_predictions = make_home_predictions(inputs)
+    # results = home_dataset["HomeGoals"]
 
-    h_predictions = make_home_predictions(inputs)
-    results = home_dataset["HomeGoals"]
+    # probability_analysis(h_predictions, results)
 
-    probability_analysis(h_predictions, results)
+    # plot_data(home_dataset["HomeGoals"], h_predictions, "Home Predictions")
 
-    plot_data(home_dataset["HomeGoals"], h_predictions, "Home Predictions")
+    # AWAY GOALS PREDICTION
+    away_dataset = pd.read_csv("Datasets/PL_DATA.csv")
+    away_dataset = away_dataset.drop(["hSaves"], axis=1)
+    inputs = generate_input(away_dataset)
 
-    # # AWAY GOALS PREDICTION
-    # away_dataset = pd.read_csv("Datasets/PL_DATA.csv")
+    print(inputs[0])
 
-    # inputs = generate_input(away_dataset)
+    a_predictions = make_away_predictions(inputs)
+    results = away_dataset["awayGoals"]
 
-    # a_predictions = make_away_predictions(inputs)
-    # results = away_dataset["awayGoals"]
+    probability_analysis(a_predictions, results)
 
-    # probability_analysis(a_predictions, results)
+    plot_data(away_dataset["awayGoals"], a_predictions, "Away Predictions")
 
-    # plot_data(away_dataset["awayGoals"], a_predictions, "Away Predictions")
+    input = [
+        [
+            69.1,
+            48.1,
+            18.2,
+            14.6,
+            6.6,
+            5.8,
+            4.8,
+            4.8,
+            6.8,
+            4.0,
+            90.0,
+            78.9,
+            2.0,
+            3.0,
+            6.4,
+            6.2,
+            1.0,
+            2.4,
+            63.4,
+            63.6,
+            50.0,
+            48.4,
+            1.6,
+            8.0,
+            12.0,
+            11.2,
+            9.4,
+            0.6,
+            1.8,
+            0.0,
+            0.0,
+        ]
+    ]
+    hgs = make_home_predictions([np.array(input).reshape(1, -1)])
+    # ags = make_away_predictions([np.array(input).reshape(1, -1)])
+    print(hgs)
