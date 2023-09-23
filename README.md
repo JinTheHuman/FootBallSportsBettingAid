@@ -10,5 +10,4 @@ Seagull prediction protocol only takes in its own stats as features. E.g. to pre
 ## Instructions
 1. Download all libraries including: sklearn, pandas, numpy, beautifulSoup, matplotlib, requests
 2. Run "python pigeon_predictor.py" or "python seagull_predictor"
-3. Enter home and away team making sure team name matches the format used by skysports in their urls
-4. You will have the predicted scoreline
+4. You will have the predicted scorelines for 10 of the upcoming fixtures
