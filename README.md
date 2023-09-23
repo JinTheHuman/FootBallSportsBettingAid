@@ -1,5 +1,7 @@
 # FootBall SportsBetting Aid
 
+Predicts scorelines for upcoming Premier League fixtures
+
 ## Two Prediction Protocols 
 Currently experimenting with two prediction protocols.
 ### PIGEON
